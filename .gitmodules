@@ -1,0 +1,3 @@
+[submodule "vendor/chaiscript"]
+	path = vendor/chaiscript
+	url = https://github.com/ChaiScript/ChaiScript
