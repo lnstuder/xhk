@@ -1,18 +1,17 @@
-<p align="center">
+<!-- <p align="center">
   <a href="" rel="noopener">
  <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
-</p>
+</p> -->
 
 <h3 align="center">xhk</h3>
 
-<!-- <div align="center">
+<div align="center">
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![Status](https://img.shields.io/badge/status-development-orange?style=flat-square)]()
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lianstuder/xhk?style=flat-square)
+![License](https://img.shields.io/github/license/lianstuder/xhk?style=flat-square)
 
-</div> -->
+</div>
 
 ---
 
