@@ -1,0 +1,3 @@
+#define xhk_VERSION_MAJOR @xhk_VERSION_MAJOR@
+#define xhk_VERSION_MINOR @xhk_VERSION_MINOR@
+#define xhk_VERSION_PATCH @xhk_VERSION_PATCH@
