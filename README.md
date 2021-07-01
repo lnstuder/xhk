@@ -15,7 +15,7 @@
 
 ---
 
-<p align="center"> cross platform hotkey daemon 
+<p align="center"> (almost) cross platform hotkey daemon 
     <br> 
 </p>
 
@@ -29,7 +29,7 @@
 
 ## About
 
-*xhk* is a cross platform alternative for already existing tools like *sxhkd* or *AutoHotkey*, using Lua as its scripting language. Works on Windows, MacOS and GNU/Linux.
+*xhk* is an almost cross platform alternative for already existing tools like *sxhkd* or *AutoHotkey*, using Lua as its scripting language. Works on MacOS and GNU/Linux. Does not support Windows, because I hate BotnetOS (Windows).
 
 ## Documentation
 
