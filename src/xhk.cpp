@@ -1,4 +1,15 @@
 #include "xhk.h"
+#include <getopt.h>
+#include <X11/Xlib.h>
+
+/* TODO:
+ * receive keystrokes
+ * hotkeys / key combinations
+ * run as a daemon
+ * configure hotkeys and actions with chainscript / config files
+ *
+*/
+
 
 // #include <chaiscript/chaiscript.hpp>
 
@@ -18,6 +29,37 @@ static const char *license_note =
     "You should have received a copy of the GNU General Public License\n"
     "along with this program.  If not, see <https://www.gnu.org/licenses/>.\n";
 
+
+void setup_daemon()
+{
+    printf("Setting up xhk daemon...\n");
+    Display *dpy;
+    XEvent event;
+    dpy = XOpenDisplay(NULL);
+
+}
+
+void parse_cmd_args(int *argc, char **argv)
+{
+    int option;
+    while((option = getopt((*argc), argv, ":hd")) != -1)
+    {
+        switch(option)
+        {
+        case 'h':
+            print_info();
+            break;
+        case 'd':
+            setup_daemon();
+            break;
+        case '?':
+            printf("Unknown option %c. See 'xhk -h' for help.\n", option);
+            break;
+        }
+
+    }
+}
+
 int main(int argc, char **argv)
 {
     // chaiscript::ChaiScript chai;
@@ -25,7 +67,7 @@ int main(int argc, char **argv)
     // chai.eval(R"(
     //     print_info();
     // )");
-    print_info();
+    parse_cmd_args(&argc, argv);
     return EXIT_SUCCESS;
 }
 

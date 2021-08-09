@@ -11,6 +11,9 @@ option(PRECOMPILE_HEADERS "Use precompiled headers for improved compile time." O
 project(${CMAKE_PROJECT_NAME} VERSION 1.0.0)
 configure_file(config.h.in config.h)
 
+# Xlib
+find_package(X11 REQUIRED)
+
 add_subdirectory(vendor/chaiscript)
 
 set(CMAKE_PROJECT_SOURCEFILES
@@ -22,6 +25,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 
 include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     include
+    ${X11_INCLUDE_DIR}
 )
 
 # optionally: use precompiled headers
@@ -33,6 +37,7 @@ endif(PRECOMPILE_HEADERS)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     chaiscript
+    ${X11_LIBRARIES}
 )
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
