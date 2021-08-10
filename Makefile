@@ -1,11 +1,22 @@
 .POSIX:
 
-configure:
-	mkdir build
-	cd build &&\
-	cmake ..
+include config.mk
 
-run:
-	./build/Debug/xhk.exe
+all: clean $(EXEC)
 
-.PHONY: configure run
+$(EXEC): $(OBJS)
+	${CC} ${CFLAGS} ${INCS} -o $@ ${OBJS} ${LDFLAGS}
+
+.c.o:
+	$(CC) $(CFLAGS) $(INCS) -c $<
+
+clean:
+	rm -f *.o $(EXEC)
+
+install:
+	mv $(EXEC) $(BINDIR)
+
+uninstall:
+	rm -f $(BINDIR)/$(EXEC)
+
+.PHONY: clean install
