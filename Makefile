@@ -1,14 +1,8 @@
 .POSIX:
 
-include config.mk
-
-all: clean $(EXEC)
-
-$(EXEC): $(OBJS)
-	${CC} ${CFLAGS} ${INCS} -o $@ ${OBJS} ${LDFLAGS}
-
-.c.o:
-	$(CC) $(CFLAGS) $(INCS) -c $<
+all:
+	cd build &&\
+	meson compile -j 4
 
 clean:
 	rm -f *.o $(EXEC)
@@ -19,4 +13,4 @@ install:
 uninstall:
 	rm -f $(BINDIR)/$(EXEC)
 
-.PHONY: clean install
+.PHONY: clean install uninstall
