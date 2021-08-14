@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# init.d folder for openrc service file
+!init.d
+
 # Compiled Object files
 *.slo
 *.lo
