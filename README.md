@@ -15,7 +15,7 @@
 
 ---
 
-<p align="center"> (almost) cross platform hotkey daemon 
+<p align="center"> X11 hotkey daemon 
     <br> 
 </p>
 
@@ -23,22 +23,17 @@
 
 - [Table of Contents](#table-of-contents)
 - [About](#about)
-- [Documentation](#documentation)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 
 ## About
 
-*xhk* is an almost cross platform alternative for already existing tools like *sxhkd* or *AutoHotkey*, using Lua as its scripting language. Works on MacOS and GNU/Linux. Does not support Windows, because I hate BotnetOS (Windows).
-
-## Documentation
-
-The documentation is still work in progress, so is *xhk* itself.
+*xhk* is a hotkey daemon for GNU/Linux using X11. It must be compiled from source since it needs to be configured through a C header file. Distribution precompiled binaries is therefore unfavourable.
 
 ## Acknowledgements
 
-- Based on the idea of [AutoHotkey](https://github.com/AutoHotkey) and [sxhkd](https://github.com/baskerville/sxhkd).
+- [sxhkd](https://github.com/baskerville/sxhkd) - Project idea and guide on how to use xcb.
 
 ## License
 
-This project is licensed under the terms of the GNU General Public License v3.0. See the [LICENSE](https://github.com/lianstuder/xhk/blob/master/LICENSE) file for more information.
+This project is licensed under the terms of the GNU General Public License version 2. See the [LICENSE](https://github.com/lianstuder/xhk/blob/master/LICENSE) file for more information.
