@@ -7,9 +7,9 @@
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-development-orange?style=flat-square)]()
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/lianstuder/xhk?style=flat-square)
-![License](https://img.shields.io/github/license/lianstuder/xhk?style=flat-square)
+![Wayland Support](https://img.shields.io/badge/Wayland%20Support-Not%20Yet-black?style=flat-square&labelColor=white)
+![Platform](https://img.shields.io/badge/platform-GNU%2FLinux-black?style=flat-square&labelColor=white)
+![License](https://img.shields.io/badge/license-GPL--2.0-black?style=flat-square&labelColor=white)
 
 </div>
 
