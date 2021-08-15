@@ -15,7 +15,7 @@
 
 ---
 
-<p align="center"> X11 hotkey daemon 
+<p align="center"> hotkey daemon for GNU/Linux systems using X11
     <br> 
 </p>
 
@@ -28,7 +28,7 @@
 
 ## About
 
-*xhk* is a hotkey daemon for GNU/Linux using X11. It must be compiled from source since it needs to be configured through a C header file. Distribution precompiled binaries is therefore unfavourable.
+*xhk* is a hotkey daemon for GNU/Linux systems using X11. To configure it, you must edit its source, specifically the config.h header file. Like for example dwm, dmenu and other suckless utilities, this requires you to compile xhk from source and distribution of precompiled binaries is useless.
 
 ## Acknowledgements
 
