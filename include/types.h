@@ -16,7 +16,7 @@
 #ifndef XHK_TYPES_H
 #define XHK_TYPES_H
 
-typedef struct {
+typedef struct hotkey_t {
     uint16_t modfield;
     xcb_keysym_t keysym;
     uint8_t event_type;

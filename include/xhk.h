@@ -17,5 +17,10 @@
 #define XHK_XHK_H
 
 void parse_args(int *, char **);
+void setup();
+void interrupt(int);
+void grab();
+void keyboard_event_callback(xcb_generic_event_t *, uint8_t);
+xcb_keycode_t *keycodes_from_keysym(xcb_keysym_t);
 
 #endif

@@ -4,7 +4,6 @@ project('xhk', 'c',
 )
 
 project_source_files = [
-  'src/daemon.c',
   'src/xhk.c'
 ]
 

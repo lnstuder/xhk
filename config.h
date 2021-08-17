@@ -38,14 +38,13 @@
 #define XK_XKB_KEYS
 // ----------------------------
 
-#include <X11/keysymdef.h>
-
 // Routine Definitions
 void open_terminal() {
     printf("Opening terminal...");
 }
 
+#include <X11/keysymdef.h>
 // Hotkeys Atlas
-static const hotkey_t hotkeys[sizeof(hotkey_t)] = {
+static const hotkey_t hotkeys[1] = {
     {XCB_MOD_MASK_CONTROL|XCB_MOD_MASK_SHIFT, XK_Return, XCB_KEY_PRESS, &open_terminal}
 };
