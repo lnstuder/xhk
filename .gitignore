@@ -35,5 +35,5 @@
 *.app
 
 .vscode/
-build/
+bin/
 refs/

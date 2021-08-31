@@ -1,16 +1,24 @@
 .POSIX:
 
-all:
-	cd build &&\
-	meson compile -j 4
+CC		= gcc
+CFLAGS	= -Wall -pedantic -O2 -pipe -march=native -Iinclude\
+		-Wunused-parameter -Wimplicit-function-declaration -Wunreachable-code
+LDFLAGS	+= -lX11 -lxcb -lxcb-keysyms
 
-clean:
-	rm -f *.o $(EXEC)
+SRCS	= $(wildcard src/*.c)
+OBJS	= $(SRCS:.c=.o)
 
-install:
-	mv $(EXEC) $(BINDIR)
+TARGET	= xhk
 
-uninstall:
-	rm -f $(BINDIR)/$(EXEC)
+# Version Macro
+VERSION = "1.0.0"
+CFLAGS += -DVERSION='$(VERSION)'
 
-.PHONY: clean install uninstall
+%.o: %.c
+	$(CC) -o $@ -c $< $(CFLAGS)
+
+build: $(OBJS)
+	$(CC) -o ./bin/$(TARGET) $^ $(LDFLAGS)
+ 
+ clean:
+	rm ./**/*.o

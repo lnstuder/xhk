@@ -13,87 +13,79 @@
 // You should have received a copy of the GNU General Public License along
 // with this program; if not, you can find the full license text in the LICENSE file.
 
+#define XHK_DEBUG
+#define _GNU_SOURCE
+ 
+// Locales
+// -------------------
+#define XK_MISCELLANY
+#define XK_XKB_KEYS
+#define XK_LATIN1
+#define XK_LATIN2
+#define XK_LATIN3
+#define XK_LATIN4
+// -------------------
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <syslog.h>
 #include <getopt.h>
 #include <stdbool.h>
+#include <signal.h>
+#include <string.h>
 
 #include <xcb/xcb.h>
 #include <xcb/xcb_event.h>
 #include <xcb/xcb_keysyms.h>
 #include <xcb/xproto.h>
+#include <X11/keysymdef.h>
 
 #include "xhk.h"
+#include "util.h"
 #include "types.h"
 
-// User configuration
-#include "../config.h"
+bool running = false;
+bool grabbed = false;
 
-xcb_connection_t *con;
+xcb_connection_t *dpy;
 xcb_window_t root;
-xcb_key_symbols_t *symbols;
+xcb_key_symbols_t *syms;
 
-bool running, reload;
-
-int main(int argc, char **argv)
-{
-    signal(SIGHUP, interrupt);
-    signal(SIGINT, interrupt);
-
-    // Parse command line arguments
+int main(int argc, char **argv) {
     parse_args(&argc, argv);
+    signal_handlers();
 
-    setup();
-    grab();
+    xhk_setup();
+    grab_keybd();
     running = true;
-    syslog(LOG_NOTICE, "Started daemon");
 
-    // fs_set descriptors;
 
-    // xcb_generic_event_t *event;
-    xcb_flush(con);
+    xcb_generic_event_t *event;
+    xcb_flush(dpy);
 
-    // while (running)
-    // {
-    //     // FD_ZERO(&descriptors);
-	// 	// FD_SET(fd, &descriptors);
+    while (running) {
 
-	// 	// if (select(fd + 1, &descriptors, NULL, NULL, NULL) > 0) {
-	// 		while ((event = xcb_poll_for_event(con)) != NULL) {
-	// 			uint8_t event_type = XCB_EVENT_RESPONSE_TYPE(event);
-	// 			switch (event_type) {
-	// 				case XCB_KEY_PRESS:
-	// 				case XCB_KEY_RELEASE:
-	// 				case XCB_BUTTON_PRESS:
-	// 				case XCB_BUTTON_RELEASE:
-	// 					keyboard_event_callback(event, event_type);
-	// 					break;
+        ASSERT(!xcb_connection_has_error(dpy));
 
-	// 				default:
-	// 					printf("received event %u\n", event_type);
-	// 					break;
-	// 			}
-	// 			free(event);
-	// 		}
-	// 	// }
-    // }
+        while ((event = xcb_poll_for_event(dpy)) != NULL) {
+            uint8_t event_type = XCB_EVENT_RESPONSE_TYPE(event);
+            switch (event_type) {
+                case XCB_KEY_PRESS:
+                case XCB_KEY_RELEASE:
+                case XCB_BUTTON_PRESS:
+                case XCB_BUTTON_RELEASE:
+                    PRINTF("Event: %u\n", event_type);
+                    break;
+            }
+            free(event);
+        }
+    }
 
-    xcb_ungrab_key(con, XCB_GRAB_ANY, root, XCB_BUTTON_MASK_ANY);
-    xcb_flush(con);
-
-    closelog();
-    xcb_disconnect(con);
+    stop_daemon();
+    ungrab_keybd();
     return EXIT_SUCCESS;
 }
 
-void parse_args(int *argc, char **argv)
-{
+void parse_args(int *argc, char **argv) {
     int option;
     while((option = getopt((*argc), argv, ":h")) != -1)
     {
@@ -117,59 +109,83 @@ void parse_args(int *argc, char **argv)
     }
 }
 
-void setup()
-{
+void xhk_setup() {
     int screen_idx;
-    con = xcb_connect(NULL, &screen_idx);
-    if (xcb_connection_has_error(con))
-        exit(EXIT_FAILURE);
-    xcb_screen_t *screen = NULL;
-    xcb_screen_iterator_t iter = xcb_setup_roots_iterator(xcb_get_setup(con));
+    dpy = xcb_connect(NULL, &screen_idx);
+    ASSERT(!xcb_connection_has_error(dpy));
+    PUTS("Connected to X server");
+
+    xcb_screen_t *sc = NULL;
+    xcb_screen_iterator_t iter = xcb_setup_roots_iterator(xcb_get_setup(dpy));
     for (; iter.rem; xcb_screen_next(&iter), screen_idx--) {
-        if (screen_idx == 0) {
-            screen = iter.data;
+        if (screen_idx != 0)
+            continue;
+        sc = iter.data;
+        break;
+    }
+
+    ASSERT(sc != NULL);
+    root = sc->root;
+    PUTS("Aquired screen from X server");
+
+    syms = xcb_key_symbols_alloc(dpy);
+    PUTS("Allocated X11 keysyms");
+}
+
+void stop_daemon() {
+    xcb_flush(dpy);
+    xcb_key_symbols_free(syms);
+    xcb_disconnect(dpy);
+    PUTS("Connection to X server closed");
+}
+
+void signal_handlers() {
+    signal(SIGTERM, interrupt);
+    signal(SIGHUP, interrupt);
+    signal(SIGINT, interrupt);
+}
+
+void interrupt(int sig) {
+    switch(sig) {
+        case SIGTERM:
+        case SIGHUP:
+        case SIGINT:
+            running = false;
+            PRINTF("SIG%s: Terminating\n", sigabbrev_np(sig));
             break;
-        }
+        default:
+            PRINTF("SIG%s: Ignoring", sigabbrev_np(sig));
+            break;
     }
+}
 
-    if (screen == NULL)
-        exit(EXIT_FAILURE);
+void grab_keybd() {
+
+    xcb_void_cookie_t cookie;
     
-    root = screen->root;
-    symbols = xcb_key_symbols_alloc(con);
+    // struct keybinding_t keybindings[] = {
+    //     { 37, 65 }
+    // };
+    
+    // for (int i = 0; i < COUNT(keybindings); i++) {
+    //     uint16_t m = keybindings[i].mods;
+    //     uint32_t k = keybindings[i].keysym;
+    //     PRINTF("Grabbing key: Modifiers: %i; Keysym: %i\n", m, k);
 
-    openlog("xhk", LOG_PID, LOG_DAEMON);
+    //     cookie = xcb_grab_key_checked(dpy, true, root, m, k, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+    //     ASSERT(xcb_request_check(dpy, cookie));
+    // }
+
+    cookie = xcb_grab_key_checked(dpy, true, root, XCB_MOD_MASK_ANY, XCB_GRAB_ANY, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+    ASSERT(xcb_request_check(dpy, cookie));
+
+    grabbed = true;
+    PUTS("Grabbed keybindings");
 }
 
-void interrupt(int sig)
-{
-    if (sig == SIGHUP)
-        reload = true;
-    else if (sig == SIGTERM)
-        running = false;
+void ungrab_keybd() {
+    xcb_ungrab_key(dpy, XCB_GRAB_ANY, root, XCB_BUTTON_MASK_ANY);
+    xcb_flush(dpy);
+    grabbed = false;
+    PUTS("Ungrabbed keybindings");
 }
-
-void grab() 
-{
-    // xcb_generic_error_t *err;
-    for (int i = 0; i < sizeof(hotkeys) / sizeof(hotkey_t); i++)
-    {
-        printf("%d\n", hotkeys[i].keysym);
-        xcb_keycode_t keycode;
-        // keycode = xcb_key_symbols_get_keysym(symbols, hotkeys[i].keysym);
-        // err = xcb_request_check(con, xcb_grab_key_checked(con, true, root, hotkeys[i].modfield, keycode, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_SYNC));
-        // if (err != NULL)
-        // {
-        //     printf("ERROR COULD NOT GRAB");
-        // }
-        // free(err);
-    }
-    xcb_flush(con);
-}
-
-void keyboard_event_callback(xcb_generic_event_t *event, uint8_t event_type)
-{
-    syslog(LOG_NOTICE, "KEY EVENT");
-    // Event handler for key/button events
-}
-

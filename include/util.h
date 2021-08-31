@@ -13,15 +13,29 @@
 // You should have received a copy of the GNU General Public License along
 // with this program; if not, you can find the full license text in the LICENSE file.
 
-#ifndef XHK_XHK_H
-#define XHK_XHK_H
+#ifndef XHK_UTIL_H
+#define XHK_UTIL_H
 
-void parse_args(int *, char **);
-void xhk_setup();
-void stop_daemon();
-void signal_handlers();
-void interrupt(int);
-void grab_keybd();
-void ungrab_keybd();
+#ifdef XHK_DEBUG
+
+
+#include <assert.h>
+
+#define PUTS(x)          puts(x)
+#define PRINTF(...)      printf(__VA_ARGS__)
+#define ASSERT(x)        assert(x)
+
+
+#else
+
+
+#define PUTS(x)          ((void)0)
+#define PRINTF(x)        ((void)0)
+#define ASSERT(x)        ((void)0)
+
+
+#endif
+
+#define COUNT(x)         (sizeof(x) / sizeof(*x))
 
 #endif
