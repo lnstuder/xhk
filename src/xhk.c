@@ -1,17 +1,5 @@
-// xhk X11 hotkey daemon
 // Copyright (C) 2021  Lian Studer
-
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 
-// as published by the Free Software Foundation;
-
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, you can find the full license text in the LICENSE file.
+// See the LICENSE file for more information.
 
 #define XHK_DEBUG
 #define _GNU_SOURCE
@@ -42,6 +30,7 @@
 #include "xhk.h"
 #include "util.h"
 #include "types.h"
+#include "../config.h"
 
 bool running = false;
 bool grabbed = false;
@@ -67,12 +56,11 @@ int main(int argc, char **argv) {
         ASSERT(!xcb_connection_has_error(dpy));
 
         while ((event = xcb_poll_for_event(dpy)) != NULL) {
+            PUTS("Received X event");
             uint8_t event_type = XCB_EVENT_RESPONSE_TYPE(event);
             switch (event_type) {
                 case XCB_KEY_PRESS:
                 case XCB_KEY_RELEASE:
-                case XCB_BUTTON_PRESS:
-                case XCB_BUTTON_RELEASE:
                     PRINTF("Event: %u\n", event_type);
                     break;
             }
@@ -163,21 +151,22 @@ void grab_keybd() {
 
     xcb_void_cookie_t cookie;
     
-    // struct keybinding_t keybindings[] = {
-    //     { 37, 65 }
-    // };
-    
-    // for (int i = 0; i < COUNT(keybindings); i++) {
-    //     uint16_t m = keybindings[i].mods;
-    //     uint32_t k = keybindings[i].keysym;
-    //     PRINTF("Grabbing key: Modifiers: %i; Keysym: %i\n", m, k);
-
-    //     cookie = xcb_grab_key_checked(dpy, true, root, m, k, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-    //     ASSERT(xcb_request_check(dpy, cookie));
-    // }
-
-    cookie = xcb_grab_key_checked(dpy, true, root, XCB_MOD_MASK_ANY, XCB_GRAB_ANY, XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
-    ASSERT(xcb_request_check(dpy, cookie));
+    for (int i = 0; i < COUNT(keybindings); i++) {
+        
+        PRINTF("Grabbing keys - Modifiers: %i; Keysym: %i\n", keybindings[i].mods, keybindings[i].keysym);
+        
+        cookie = xcb_grab_key_checked(dpy, true, root, keybindings[i].mods, 
+        SYMTOKEY(keybindings[i].keysym), XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+        
+        xcb_generic_error_t *err;
+        err = xcb_request_check(dpy, cookie);
+        if (err != NULL) {
+            if (err->error_code == XCB_ACCESS)
+                ERR("Keycombination is already grabbed.");
+            else
+                ERR("Error: %u\n", err->error_code);
+        }
+    }
 
     grabbed = true;
     PUTS("Grabbed keybindings");

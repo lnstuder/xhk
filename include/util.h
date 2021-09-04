@@ -1,17 +1,5 @@
-// xhk X11 hotkey daemon
 // Copyright (C) 2021  Lian Studer
-
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License version 2 
-// as published by the Free Software Foundation;
-
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License along
-// with this program; if not, you can find the full license text in the LICENSE file.
+// See the LICENSE file for more information.
 
 #ifndef XHK_UTIL_H
 #define XHK_UTIL_H
@@ -25,7 +13,6 @@
 #define PRINTF(...)      printf(__VA_ARGS__)
 #define ASSERT(x)        assert(x)
 
-
 #else
 
 
@@ -37,5 +24,9 @@
 #endif
 
 #define COUNT(x)         (sizeof(x) / sizeof(*x))
+#define SYMTOKEY(x)      *xcb_key_symbols_get_keycode(syms, x)
+
+void xcb_err(char *fmt, ...);
+void xcb_warn(char *fmt, ...);
 
 #endif
