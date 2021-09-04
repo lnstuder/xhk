@@ -1,7 +1,7 @@
 .POSIX:
 
 CC		= gcc
-CFLAGS	= -Wall -pedantic -O2 -pipe -march=native -Iinclude\
+CFLAGS	= -Wall -pedantic -O2 -pipe -march=native -Iinclude -I./\
 		-Wunused-parameter -Wimplicit-function-declaration -Wunreachable-code
 LDFLAGS	+= -lX11 -lxcb -lxcb-keysyms
 
