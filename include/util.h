@@ -26,7 +26,7 @@
 #define COUNT(x)         (sizeof(x) / sizeof(*x))
 #define SYMTOKEY(x)      *xcb_key_symbols_get_keycode(syms, x)
 
-void xcb_err(char *fmt, ...);
-void xcb_warn(char *fmt, ...);
+void xhk_err(char *fmt, ...);
+void xhk_warn(char *fmt, ...);
 
 #endif

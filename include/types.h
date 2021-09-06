@@ -5,7 +5,7 @@
 #define XHK_TYPES_H
 
 struct hotkey_t {
-    uint16_t modifier;
+    uint16_t modifiers;
     xcb_keysym_t keysym;
 };
 

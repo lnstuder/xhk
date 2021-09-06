@@ -151,20 +151,20 @@ void grab_keybd() {
 
     xcb_void_cookie_t cookie;
     
-    for (int i = 0; i < COUNT(keybindings); i++) {
+    for (int i = 0; i < COUNT(hotkeys); i++) {
         
-        PRINTF("Grabbing keys - Modifiers: %i; Keysym: %i\n", keybindings[i].mods, keybindings[i].keysym);
+        PRINTF("Grabbing keys - Modifiers: %i; Keysym: %i\n", hotkeys[i].modifiers, hotkeys[i].keysym);
         
-        cookie = xcb_grab_key_checked(dpy, true, root, keybindings[i].mods, 
-        SYMTOKEY(keybindings[i].keysym), XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
+        cookie = xcb_grab_key_checked(dpy, true, root, hotkeys[i].modifiers, 
+        SYMTOKEY(hotkeys[i].keysym), XCB_GRAB_MODE_ASYNC, XCB_GRAB_MODE_ASYNC);
         
         xcb_generic_error_t *err;
         err = xcb_request_check(dpy, cookie);
         if (err != NULL) {
             if (err->error_code == XCB_ACCESS)
-                ERR("Keycombination is already grabbed.");
+                xhk_err("Keycombination is already grabbed.");
             else
-                ERR("Error: %u\n", err->error_code);
+                xhk_err("Error: %u\n", err->error_code);
         }
     }
 

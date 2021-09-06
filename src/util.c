@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-void xcb_err(char *fmt, ...) {
+void xhk_err(char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
@@ -15,7 +15,7 @@ void xcb_err(char *fmt, ...) {
     exit(EXIT_FAILURE);
 }
 
-void xcb_warn(char *fmt, ...) {
+void xhk_warn(char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
