@@ -129,21 +129,35 @@ void stop_daemon() {
 
 void signal_handlers() {
     signal(SIGTERM, interrupt);
-    signal(SIGHUP, interrupt);
     signal(SIGINT, interrupt);
+    signal(SIGHUP, interrupt);
 }
 
 void interrupt(int sig) {
     switch(sig) {
         case SIGTERM:
-        case SIGHUP:
         case SIGINT:
+        case SIGHUP:
             running = false;
-            PRINTF("SIG%s: Terminating\n", sigabbrev_np(sig));
+            PRINTF("%s: Terminating\n", signal_abbrv(sig));
             break;
         default:
-            PRINTF("SIG%s: Ignoring", sigabbrev_np(sig));
+            PRINTF("%s(%i): Ignoring\n", signal_abbrv(sig), sig);
             break;
+    }
+}
+
+char *signal_abbrv(int sig) {
+    switch(sig) {
+        case 15: // SIGTERM
+            return "SIGTERM";
+        case 2: // SIGINT
+            return "SIGINT";
+        case 1: // SIGHUP
+            return "SIGHUP";
+        default:
+            return "UNDEF";
+
     }
 }
 

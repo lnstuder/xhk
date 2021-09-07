@@ -9,6 +9,7 @@ void xhk_setup();
 void stop_daemon();
 void signal_handlers();
 void interrupt(int);
+char *signal_abbrv(int);
 void grab_keybd();
 void ungrab_keybd();
 
