@@ -28,5 +28,6 @@
 
 void xhk_err(char *fmt, ...);
 void xhk_warn(char *fmt, ...);
+void execute_hk_proc(int (*proc)(void));
 
 #endif

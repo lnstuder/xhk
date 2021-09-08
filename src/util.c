@@ -21,3 +21,11 @@ void xhk_warn(char *fmt, ...) {
     vfprintf(stderr, fmt, args);
     va_end(args);
 }
+
+void execute_hk_proc(int (*proc)()) {
+    if ((*proc)() != 0) {
+        xhk_err("Could not execute procedure");
+    } else {
+        PUTS("Successfully executed hotkey procedure");
+    }
+}
