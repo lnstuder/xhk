@@ -20,5 +20,8 @@ CFLAGS += -DVERSION='$(VERSION)'
 build: $(OBJS)
 	$(CC) -o ./bin/$(TARGET) $^ $(LDFLAGS)
  
- clean:
+clean:
 	rm ./**/*.o
+
+install:
+	cp ./bin/xhk /usr/bin
