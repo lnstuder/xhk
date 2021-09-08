@@ -27,9 +27,10 @@
 #include <xcb/xproto.h>
 #include <X11/keysymdef.h>
 
-#include "xhk.h"
 #include "util.h"
 #include "types.h"
+#include "xhk.h"
+
 #include "../config.h"
 
 bool running = false;
@@ -62,6 +63,7 @@ int main(int argc, char **argv) {
                 case XCB_KEY_PRESS:
                 case XCB_KEY_RELEASE:
                     PRINTF("Event: %u\n", event_type);
+                    keypress_event((xcb_key_press_event_t *)event);
                     break;
             }
             free(event);
@@ -191,4 +193,27 @@ void ungrab_keybd() {
     xcb_flush(dpy);
     grabbed = false;
     PUTS("Ungrabbed keybindings");
+}
+
+void keypress_event(xcb_key_press_event_t *keypress) {
+    xcb_keysym_t keysym = xcb_key_press_lookup_keysym(syms, keypress, 0);
+    if (keysym == 0) {
+        xhk_err("Keysym not found for keycode %i\n", keypress->detail);
+    }
+    hotkey_t *hotkey = find_hotkey(keysym, keypress->state);
+    if (hotkey != NULL) {
+        int (*fun)() = hotkey->proc;
+        execute_hk_proc(fun);
+    }
+}
+
+hotkey_t *find_hotkey(xcb_keysym_t keysym, uint16_t modifiers) {
+    hotkey_t *hk = (hotkey_t *) malloc(sizeof(hotkey_t));
+    for (int i = 0; i < COUNT(hotkeys); i++) {
+        if (hotkeys[i].keysym == keysym && hotkeys[i].modifiers == modifiers) {
+            (*hk) = hotkeys[i];
+            break;
+        }
+    }
+    return hk;
 }

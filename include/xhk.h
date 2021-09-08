@@ -12,5 +12,7 @@ void interrupt(int);
 char *signal_abbrv(int);
 void grab_keybd();
 void ungrab_keybd();
+void keypress_event(xcb_key_press_event_t *);
+hotkey_t *find_hotkey(xcb_keysym_t, uint16_t);
 
 #endif
