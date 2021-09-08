@@ -4,9 +4,10 @@
 #ifndef XHK_TYPES_H
 #define XHK_TYPES_H
 
-struct hotkey_t {
+typedef struct {
     uint16_t modifiers;
     xcb_keysym_t keysym;
-};
+    int (*proc)();
+} hotkey_t;
 
 #endif
